@@ -84,8 +84,22 @@ examsRouter.post("/:id/answer", async (req, res, next) => {
     console.log(error)
   }
 })
-examsRouter.get("/exams/id", async (req, res, err) => {})
-examsRouter.post("/start", async (req, res, err) => {})
+examsRouter.get("/:id", async (req, res, next) => {
+  try {
+    const exams = await readDB(examsFolder)
+    const selectedExam = exams.find((exam) => exam._id === req.params.id)
+    if (selectedExam) {
+      res.send(selectedExam)
+    } else {
+      const error = new Error("Exam not found")
+      error.httpStatusCode = 404
+      next(error)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})
+// examsRouter.post("/start", async (req, res, err) => {})
 
 //EXTRA CRUD QUESTIONS
 // examsRouter.post("/questions", (req,res,err)=>{})
