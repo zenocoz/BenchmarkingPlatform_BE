@@ -112,7 +112,7 @@ examsRouter.get("/:id", async (req, res, next) => {
 examsRouter.post("/questions", async (req, res, next) => {
   try {
     const questions = await readDB(questionsFolder)
-    const newQuestion = req.body
+    const newQuestion = {...req.body, id: uniqid()}
     questions.push(newQuestion)
     await writeDB(questionsFolder, questions)
     res.send(questions).status(201)
@@ -120,7 +120,31 @@ examsRouter.post("/questions", async (req, res, next) => {
     console.log(error)
   }
 })
-// examsRouter.put("/questions/:id", (req,res,err)=>{})
+examsRouter.put("/questions/:id", async (req, res, next) => {
+  try {
+    const questions = await readDB(questionsFolder)
+    const selectedQuestion = questions.findIndex(
+      (question) => question.id === req.params.id
+    )
+    if (selectedQuestion) {
+      const editedQuestion = req.body
+      const newQuestionsArray = [
+        ...questions.slice(0, selectedQuestion),
+        {...questions[selectedQuestion], ...editedQuestion},
+        ...questions.slice(selectedQuestion + 1),
+      ]
+
+      await writeDB(questionsFolder, newQuestionsArray)
+      res.send(newQuestionsArray)
+    } else {
+      const error = new Error("question not found")
+      error.httpStatusCode = 404
+      next(error)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})
 // examsRouter.get("/questions", (req,res,err)=>{})
 // examsRouter.delete("/questions/id", (req,res,err)=>{})
 
