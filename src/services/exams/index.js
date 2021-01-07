@@ -1,6 +1,7 @@
 //TOOLS AND MIDDLEWARE
 const express = require("express")
 const {join} = require("path")
+const {check, validationResult, matchedData} = require("express-validator")
 
 //INSTANCES
 const examsRouter = express.Router()
@@ -9,10 +10,10 @@ const examsRouter = express.Router()
 const questionsFolder = join(__dirname, "questions.json")
 
 //Routes
-examsRouter.post("/start", (req, res, err) => {})
-examsRouter.post("/id/answer", (req, res, err) => {})
-examsRouter.get("/exams/id", (req, res, err) => {})
-examsRouter.post("/start", (req, res, err) => {})
+examsRouter.post("/start", async (req, res, err) => {})
+examsRouter.post("/id/answer", async (req, res, err) => {})
+examsRouter.get("/exams/id", async (req, res, err) => {})
+examsRouter.post("/start", async (req, res, err) => {})
 
 //EXTRA CRUD QUESTIONS
 // examsRouter.post("/questions", (req,res,err)=>{})
