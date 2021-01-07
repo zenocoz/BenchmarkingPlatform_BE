@@ -20,7 +20,22 @@ const writeDB = async (filePath, fileContent) => {
   }
 }
 
+//randomize array
+const randomizeArray = (arr) => {
+  let l = arr.length
+  let temp = null
+  let i = 0
+  while (l) {
+    i = Math.floor(Math.random() * l--)
+    temp = arr[l]
+    arr[l] = arr[i]
+    arr[i] = temp
+  }
+  return arr
+}
+
 module.exports = {
   writeDB,
   readDB,
+  randomizeArray,
 }
