@@ -3,7 +3,12 @@ const express = require("express")
 const uniqid = require("uniqid")
 const {join} = require("path")
 const {check, validationResult, matchedData} = require("express-validator")
-const {readDB, writeDB, randomizeArray} = require("../../fsUtilities")
+const {
+  readDB,
+  writeDB,
+  randomizeArray,
+  getQuestionsByDuration,
+} = require("../../fsUtilities")
 const {nextTick} = require("process")
 
 //INSTANCES
@@ -17,18 +22,21 @@ const examsFolder = join(__dirname, "./exams.json")
 examsRouter.post("/start", async (req, res, next) => {
   const questions = await readDB(questionsFolder)
   const randomArray = randomizeArray(questions)
-  //   const randomQuestions = randomArray.slice(0, 4)
+  //   const randomQuestions = randomArray.slice(0, 4) //previous implementation
 
-  const totalDuration = req.body.totalDuration
-  const questionsByDuration = []
-  let aggregateDuration = randomArray[0].duration
-  let i = 0
-  while (aggregateDuration <= totalDuration) {
-    questionsByDuration.push(randomArray[i])
-    aggregateDuration += randomArray[i].duration
-    i++
-  }
-  console.log(questionsByDuration)
+  //   const questionsByDuration = []
+  //   let aggregateDuration = randomArray[0].duration
+  //   let i = 0
+  //   while (aggregateDuration <= totalDuration) {
+  //     questionsByDuration.push(randomArray[i])
+  //     aggregateDuration += randomArray[i].duration
+  //     i++
+  //   }
+
+  const questionsByDuration = getQuestionsByDuration(
+    randomArray,
+    req.body.totalDuration
+  )
 
   const newExam = {
     ...req.body,

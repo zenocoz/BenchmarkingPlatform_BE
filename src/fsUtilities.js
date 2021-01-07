@@ -34,8 +34,21 @@ const randomizeArray = (arr) => {
   return arr
 }
 
+const getQuestionsByDuration = (array, totalDuration) => {
+  const questionsByDuration = []
+  let aggregateDuration = array[0].duration
+  let i = 0
+  while (aggregateDuration <= totalDuration) {
+    questionsByDuration.push(array[i])
+    aggregateDuration += array[i].duration
+    i++
+  }
+  return questionsByDuration
+}
+
 module.exports = {
   writeDB,
   readDB,
   randomizeArray,
+  getQuestionsByDuration,
 }
