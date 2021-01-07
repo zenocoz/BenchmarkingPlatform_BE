@@ -9,7 +9,7 @@ const {
   randomizeArray,
   getQuestionsByDuration,
 } = require("../../fsUtilities")
-const {nextTick} = require("process")
+const {nextTick, send} = require("process")
 
 //INSTANCES
 const examsRouter = express.Router()
@@ -23,15 +23,6 @@ examsRouter.post("/start", async (req, res, next) => {
   const questions = await readDB(questionsFolder)
   const randomArray = randomizeArray(questions)
   //   const randomQuestions = randomArray.slice(0, 4) //previous implementation
-
-  //   const questionsByDuration = []
-  //   let aggregateDuration = randomArray[0].duration
-  //   let i = 0
-  //   while (aggregateDuration <= totalDuration) {
-  //     questionsByDuration.push(randomArray[i])
-  //     aggregateDuration += randomArray[i].duration
-  //     i++
-  //   }
 
   const questionsByDuration = getQuestionsByDuration(
     randomArray,
@@ -118,7 +109,17 @@ examsRouter.get("/:id", async (req, res, next) => {
 // examsRouter.post("/start", async (req, res, err) => {})
 
 //EXTRA CRUD QUESTIONS
-// examsRouter.post("/questions", (req,res,err)=>{})
+examsRouter.post("/questions", async (req, res, next) => {
+  try {
+    const questions = await readDB(questionsFolder)
+    const newQuestion = req.body
+    questions.push(newQuestion)
+    await writeDB(questionsFolder, questions)
+    res.send(questions).status(201)
+  } catch (error) {
+    console.log(error)
+  }
+})
 // examsRouter.put("/questions/:id", (req,res,err)=>{})
 // examsRouter.get("/questions", (req,res,err)=>{})
 // examsRouter.delete("/questions/id", (req,res,err)=>{})
