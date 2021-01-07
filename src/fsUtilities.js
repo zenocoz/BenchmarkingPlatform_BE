@@ -8,7 +8,7 @@ const readDB = async (filePath) => {
     const fileJson = await readJSON(filePath)
     return fileJson
   } catch (error) {
-    throw new Error(error)
+    console.log(error)
   }
 }
 
@@ -16,7 +16,7 @@ const writeDB = async (filePath, fileContent) => {
   try {
     await writeJSON(filePath, fileContent)
   } catch (error) {
-    throw new Error(error)
+    console.log(error)
   }
 }
 

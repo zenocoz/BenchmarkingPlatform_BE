@@ -17,25 +17,33 @@ const examsFolder = join(__dirname, "./exams.json")
 examsRouter.post("/start", async (req, res, next) => {
   const questions = await readDB(questionsFolder)
   const randomArray = randomizeArray(questions)
-  const randomQuestions = randomArray.slice(0, 4)
+  //   const randomQuestions = randomArray.slice(0, 4)
+
+  const totalDuration = req.body.totalDuration
+  const questionsByDuration = []
+  let aggregateDuration = randomArray[0].duration
+  let i = 0
+  while (aggregateDuration <= totalDuration) {
+    questionsByDuration.push(randomArray[i])
+    aggregateDuration += randomArray[i].duration
+    i++
+  }
+  console.log(questionsByDuration)
 
   const newExam = {
     ...req.body,
     _id: uniqid(),
     examDate: new Date(),
     isCompleted: false,
-    totalDuration: 30, // used only in extras
-    questions: randomQuestions,
+    questions: questionsByDuration,
   }
   const exams = await readDB(examsFolder)
   exams.push(newExam)
   await writeDB(examsFolder, exams)
 
-  res.send(exams).sendStatus(201)
+  res.send(exams).status(201)
 })
 examsRouter.post("/:id/answer", async (req, res, next) => {
-  //get exam
-
   try {
     const exams = await readDB(examsFolder)
     const selectedExam = exams.find((exam) => exam._id === req.params.id)
@@ -103,7 +111,7 @@ examsRouter.get("/:id", async (req, res, next) => {
 
 //EXTRA CRUD QUESTIONS
 // examsRouter.post("/questions", (req,res,err)=>{})
-// examsRouter.put("/questions/id", (req,res,err)=>{})
+// examsRouter.put("/questions/:id", (req,res,err)=>{})
 // examsRouter.get("/questions", (req,res,err)=>{})
 // examsRouter.delete("/questions/id", (req,res,err)=>{})
 
