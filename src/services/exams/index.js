@@ -65,7 +65,7 @@ examsRouter.post("/:id/answer", async (req, res, next) => {
           answeredQuestions: [],
         }
       }
-      const questions = selectedExam.questions
+      const questions = selectedExam.questionsWithAnswer
       let selectedQuestion = questions[req.body.question]
 
       if (selectedQuestion) {
