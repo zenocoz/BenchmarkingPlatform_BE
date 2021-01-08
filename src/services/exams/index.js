@@ -29,19 +29,29 @@ examsRouter.post("/start", async (req, res, next) => {
     req.body.totalDuration
   )
 
+  //sending questions without the answers
+  const pureQuestions = JSON.parse(JSON.stringify(questionsByDuration)) //deep copy array
+  for (let i = 0; i < pureQuestions.length; i++) {
+    for (let j = 0; j < pureQuestions[i].answers.length; j++) {
+      delete pureQuestions[i].answers[j].isCorrect
+    }
+  }
+
   const newExam = {
     ...req.body,
     _id: uniqid(),
     examDate: new Date(),
     isCompleted: false,
-    questions: questionsByDuration,
+    questions: pureQuestions,
+    questionsWithAnswer: questionsByDuration,
   }
+
   const exams = await readDB(examsFolder)
   exams.push(newExam)
   await writeDB(examsFolder, exams)
-
   res.send(exams).status(201)
 })
+
 examsRouter.post("/:id/answer", async (req, res, next) => {
   try {
     const exams = await readDB(examsFolder)
@@ -145,7 +155,14 @@ examsRouter.put("/questions/:id", async (req, res, next) => {
     console.log(error)
   }
 })
-// examsRouter.get("/questions", (req,res,err)=>{})
+// examsRouter.get("/questions", async (req, res, next) => {
+//   try {
+//     const questions = await readDB(questionsFolder)
+//     res.send(questions).status(201)
+//   } catch (error) {
+//     console.log(error)
+//   }
+// })
 // examsRouter.delete("/questions/id", (req,res,err)=>{})
 
 module.exports = examsRouter
